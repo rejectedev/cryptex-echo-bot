@@ -19,7 +19,7 @@ services:
         sync: false
 
   # Frontend Static Site (Zero Cost)
-  - type: static
+  - type: static_site
     name: cryptex-echo-frontend
     env: node
     rootDir: frontend
