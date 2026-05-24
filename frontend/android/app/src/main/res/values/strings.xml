@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Cryptex Echo Bot</string>
+    <string name="title_activity_main">Cryptex Echo Bot</string>
+    <string name="package_name">com.rejectedev.cryptexecho</string>
+    <string name="custom_url_scheme">com.rejectedev.cryptexecho</string>
+</resources>
