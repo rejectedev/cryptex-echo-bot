@@ -1,20 +1,16 @@
 services:
-  # Backend Web Service
+  # Backend Web Service (Free Tier)
   - type: web
     name: cryptex-echo-backend
     env: python
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn api:app --host 0.0.0.0 --port $PORT
     envVars:
-      - key: PORT
-        value: 10000
       - key: FRONTEND_URL
         fromService:
           name: cryptex-echo-frontend
-          type: web
-          property: host
-      # Add other necessary env vars from .env.example here
-      # These should be configured in the Render Dashboard for security
+          type: static
+          property: url
       - key: WEBULL_EMAIL
         sync: false
       - key: WEBULL_PASSWORD
@@ -22,16 +18,16 @@ services:
       - key: WEBULL_TRADE_PIN
         sync: false
 
-  # Frontend Web Service
-  - type: web
+  # Frontend Static Site (Zero Cost)
+  - type: static
     name: cryptex-echo-frontend
     env: node
     rootDir: frontend
     buildCommand: npm install && npm run build
-    startCommand: npm run start
+    publishPath: out
     envVars:
       - key: NEXT_PUBLIC_API_URL
         fromService:
           name: cryptex-echo-backend
           type: web
-          property: host
+          property: url
