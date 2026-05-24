@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import API_BASE_URL from '../config';
 
 interface Trade {
   id: string;
@@ -38,19 +39,19 @@ export default function Dashboard() {
 
   useEffect(() => {
     // Fetch active trades
-    fetch('http://127.0.0.1:5050/trades/active')
+    fetch(`${API_BASE_URL}/trades/active`)
       .then(res => res.json())
       .then(data => setActiveTrades(data))
       .catch(console.error);
 
     // Fetch trade history
-    fetch('http://127.0.0.1:5050/trades/history')
+    fetch(`${API_BASE_URL}/trades/history`)
       .then(res => res.json())
       .then(data => setTradeHistory(data))
       .catch(console.error);
 
     // Fetch algorithm performance
-    fetch('http://127.0.0.1:5050/algorithms/performance')
+    fetch(`${API_BASE_URL}/algorithms/performance`)
       .then(res => res.json())
       .then(data => {
         setAlgorithms(prev => prev.map(algo => ({
@@ -63,7 +64,7 @@ export default function Dashboard() {
 
   const handleAlgoChange = async (algoId: string) => {
     try {
-      await fetch('http://127.0.0.1:5050/algorithms/select', {
+      await fetch(`${API_BASE_URL}/algorithms/select`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ algorithmId: algoId })
@@ -147,9 +148,8 @@ export default function Dashboard() {
                 <div key={trade.id} className="bg-gray-700 p-3 rounded-md text-sm">
                   <div className="flex justify-between">
                     <span>{trade.asset}</span>
-                    <span className={`font-mono ${
-                      trade.type === 'buy' ? 'text-green-400' : 'text-red-400'
-                    }`}>
+                    <span className={`font-mono ${trade.type === 'buy' ? 'text-green-400' : 'text-red-400'
+                      }`}>
                       ${trade.price.toFixed(2)}
                     </span>
                   </div>

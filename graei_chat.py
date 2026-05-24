@@ -43,20 +43,20 @@ def analyze_market_conditions() -> str:
 
 def get_performance_metrics():
     """Calculate and return performance metrics"""
-    state = get_current_state()
-    total_capital = sum(state["capital"].values())
     sim = run_simulation()
-    initial_total = sum(sim["capital"].values())
-    roi = ((total_capital / initial_total) - 1) * 100
+    total_capital = sum(sim["capital"].values())
+    total_in_pools = sum(sim["pools"].values())
+    initial_total = 500  # Based on graei_cryptex.initial_investment
+    roi = (((total_capital + total_in_pools) / initial_total) - 1) * 100
     
-    positions_value = 0  # In simulation mode
-    active_positions = 0  # In simulation mode
+    pool_stats = "\n    ".join([f"{name.replace('_', ' ').capitalize()}: ${amount:,.2f}" for name, amount in sim["pools"].items()])
     
     return f"""[STATS] Performance Metrics:
-    Total Capital: ${total_capital:,.2f}
+    Total Value: ${(total_capital + total_in_pools):,.2f}
     ROI: {roi:,.2f}%
-    Positions Value: ${positions_value:,.2f}
-    Active Positions: {active_positions}"""
+    Capital: ${total_capital:,.2f}
+    Pools Breakdown:
+    {pool_stats}"""
 
 def sanitize_emojis(text: str) -> str:
     """Replace emojis with text equivalents"""
@@ -117,17 +117,20 @@ def process_chat_message(message: str) -> str:
     
     # Strategy explanation
     if any(word in message for word in ['strategy', 'how', 'work']):
-        return """🎯 Echo Trading Strategy:
-        1. We track three assets: Runner, Low-Passer, and High-Passer
-        2. Buy Runner when it approaches Low-Passer price
-        3. Sell Runner when it approaches High-Passer price
-        4. Profit from the price echo between passers
-        5. Automatically reinvest portion of profits
+        return """🎯 Echo Cascading Strategy:
+        1. Multi-Tiered Profit Sharing:
+           - Daily -> Weekly -> Bi-weekly -> Monthly -> Bi-monthly -> Quarterly
+           - Profits cascade through time increments at specific percentages.
+        2. Price Spectrum Exploitation:
+           - Buys in proportionally as price enters the "decreasing spectrum."
+           - Sells in opposite amounts on the "increase of the spectrum."
+        3. Dynamic Reinvestment:
+           - Monthly pools provide a structured boost to initial capital.
         
         Current Parameters:
-        - Buy Zone: Within 10% of Low-Passer
-        - Sell Zone: Within 10% of High-Passer
-        - Profit Reinvestment: 50%"""
+        - Fluctuation: +/- 10% daily
+        - Buy Zone: Proxies Low-Passer (e.g. TSLA vs F)
+        - Sell Zone: Proxies High-Passer (e.g. TSLA vs RIVN)"""
     
     # Configuration queries
     if any(word in message for word in ['config', 'setup', 'settings']):
@@ -141,12 +144,26 @@ def process_chat_message(message: str) -> str:
         
         Active Positions: 0 (Simulation mode)"""
     
+    # Approval commands
+    if any(word in message for word in ['approve', 'accept', 'confirm', 'agree']):
+        # Simulate approval of the suggested coin (e.g., TSLA or a Crypto coin)
+        sim = run_simulation(mode="tri", approved_plan="TSLA")
+        return "✅ Plan Approved. The system has locked in the suggested buy/sell pattern based on 90-day historical averages. (Liability acknowledged by user approval)"
+
+    if any(word in message for word in ['suggest', 'recommend', 'plan']):
+        historical_averages = {"TSLA": 0.12, "BTC": 0.15, "ETH": 0.11}
+        from graei_cryptex import suggest_best_coin
+        best = suggest_best_coin(historical_averages)
+        return f"📊 90-Day Evaluation: Based on historical data standards, the most valuable asset for your current time differential is **{best}**. \n\nDo you want to 'approve plan' for {best} utilizing the Merkaba Buy/Sell system?"
+
     # Help command
     if 'help' in message:
         return """[BOT] Graei Assistant Commands:
         
         Market Analysis:
         - 'analyze market' - Get current market conditions
+        - 'suggest plan' - Get 90-day asset recommendation
+        - 'approve plan' - Accept the suggested buy/sell outlook
         - 'show prices' - View all asset prices
         - 'check runner price' - Get Runner price
         

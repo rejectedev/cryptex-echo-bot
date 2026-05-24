@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import API_BASE_URL from '../config';
 
 interface RoyaltyEntry {
   timestamp: string;
@@ -24,7 +25,7 @@ export default function Home() {
 
   useEffect(() => {
     // Fetch Pearls
-    fetch('http://127.0.0.1:5050/pearls')
+    fetch(`${API_BASE_URL}/pearls`)
       .then(res => {
         if (!res.ok) {
           throw new Error('Failed to fetch pearls');
@@ -39,7 +40,7 @@ export default function Home() {
       });
 
     // Fetch Royalties
-    fetch('http://127.0.0.1:5050/royalties')
+    fetch(`${API_BASE_URL}/royalties`)
       .then(res => {
         if (!res.ok) {
           throw new Error('Failed to fetch royalties');
@@ -48,11 +49,11 @@ export default function Home() {
       })
       .then(data => {
         if (Array.isArray(data)) {
-            setRoyalties(data);
+          setRoyalties(data);
         } else {
-            console.error("Backend returned non-array for royalties:", data);
-            setRoyalties([{ timestamp: new Date().toISOString(), trade_id: 'N/A', asset: 'Unexpected Data', royalty: 0.0 }]);
-            setError(prev => prev || 'Backend returned unexpected data for royalties.');
+          console.error("Backend returned non-array for royalties:", data);
+          setRoyalties([{ timestamp: new Date().toISOString(), trade_id: 'N/A', asset: 'Unexpected Data', royalty: 0.0 }]);
+          setError(prev => prev || 'Backend returned unexpected data for royalties.');
         }
       })
       .catch(err => {
@@ -71,7 +72,7 @@ export default function Home() {
     setCurrentMessage('');
 
     try {
-      const response = await fetch('http://127.0.0.1:5050/chat', {
+      const response = await fetch(`${API_BASE_URL}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -80,23 +81,23 @@ export default function Home() {
         credentials: 'omit',
         body: JSON.stringify({ message: currentMessage }),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.detail || 'Failed to get response from AI');
       }
-      
+
       const data = await response.json();
-      const aiMessage: ChatEntry = { 
-        sender: 'ai', 
+      const aiMessage: ChatEntry = {
+        sender: 'ai',
         text: data.reply || "I received your message but couldn't generate a proper response."
       };
       setChatHistory(prev => [...prev, aiMessage]);
     } catch (err) {
       console.error('Chat error:', err);
-      const errorMessage: ChatEntry = { 
-        sender: 'ai', 
-        text: err instanceof Error ? err.message : "Sorry, I couldn't connect to my brain. Please check the backend." 
+      const errorMessage: ChatEntry = {
+        sender: 'ai',
+        text: err instanceof Error ? err.message : "Sorry, I couldn't connect to my brain. Please check the backend."
       };
       setChatHistory(prev => [...prev, errorMessage]);
     }
@@ -126,9 +127,8 @@ export default function Home() {
             {chatHistory.map((entry, index) => (
               <div key={index} className={`flex ${entry.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
-                  className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                    entry.sender === 'user' ? 'bg-cyan-800' : 'bg-gray-700'
-                  }`}
+                  className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${entry.sender === 'user' ? 'bg-cyan-800' : 'bg-gray-700'
+                    }`}
                 >
                   <p className="text-sm">{entry.text}</p>
                 </div>

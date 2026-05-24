@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import type { EditorProps } from '@monaco-editor/react';
+import API_BASE_URL from '../config';
 
 interface SimulationResult {
   roi: number;
@@ -44,7 +45,7 @@ def should_trade(analysis):
 def execute_trade(signal):
     """Execute trading decision"""
     pass`);
-  
+
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [simResult, setSimResult] = useState<SimulationResult | null>(null);
@@ -56,7 +57,7 @@ def execute_trade(signal):
 
   const handleRunSimulation = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5050/algo/simulate', {
+      const response = await fetch(`${API_BASE_URL}/algo/simulate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code })
@@ -70,35 +71,35 @@ def execute_trade(signal):
 
   const handleAIAssist = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5050/algo/ai-assist', {
+      const response = await fetch(`${API_BASE_URL}/algo/ai-assist`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code, request: newMessage })
       });
       const { suggestion, explanation } = await response.json();
-      
-      setChatMessages(prev => [...prev, 
-        {
-          id: Date.now().toString(),
-          sender: 'user',
-          content: newMessage,
-          timestamp: new Date().toISOString(),
-          type: 'text'
-        },
-        {
-          id: (Date.now() + 1).toString(),
-          sender: 'ai',
-          content: explanation,
-          timestamp: new Date().toISOString(),
-          type: 'text'
-        },
-        {
-          id: (Date.now() + 2).toString(),
-          sender: 'ai',
-          content: suggestion,
-          timestamp: new Date().toISOString(),
-          type: 'code'
-        }
+
+      setChatMessages(prev => [...prev,
+      {
+        id: Date.now().toString(),
+        sender: 'user',
+        content: newMessage,
+        timestamp: new Date().toISOString(),
+        type: 'text'
+      },
+      {
+        id: (Date.now() + 1).toString(),
+        sender: 'ai',
+        content: explanation,
+        timestamp: new Date().toISOString(),
+        type: 'text'
+      },
+      {
+        id: (Date.now() + 2).toString(),
+        sender: 'ai',
+        content: suggestion,
+        timestamp: new Date().toISOString(),
+        type: 'code'
+      }
       ]);
       setNewMessage('');
     } catch (error) {
@@ -188,9 +189,8 @@ def execute_trade(signal):
                       key={msg.id}
                       className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
-                      <div className={`max-w-[80%] rounded-lg p-3 ${
-                        msg.sender === 'user' ? 'bg-cyan-800' : 'bg-gray-700'
-                      }`}>
+                      <div className={`max-w-[80%] rounded-lg p-3 ${msg.sender === 'user' ? 'bg-cyan-800' : 'bg-gray-700'
+                        }`}>
                         {msg.type === 'code' ? (
                           <pre className="text-sm font-mono bg-gray-900 p-2 rounded">
                             {msg.content}

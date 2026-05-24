@@ -27,6 +27,17 @@ docker compose up -d
    - Dashboard: http://localhost:3000
    - API: http://localhost:5050
 
+## Render Deployment (Blueprint)
+
+1. Connect your GitHub repository to [Render](https://render.com).
+2. Create a new **Blueprint Instance**.
+3. Render will automatically detect the `render.yaml` file.
+4. Configure the following Environment Variables in the Render Dashboard for the `backend` service:
+   - `WEBULL_EMAIL`: Your Webull account email.
+   - `WEBULL_PASSWORD`: Your Webull account password.
+   - `WEBULL_TRADE_PIN`: Your 6-digit trade PIN.
+5. The frontend and backend will be automatically linked via the `frontend_url` and `NEXT_PUBLIC_API_URL` variables defined in the blueprint.
+
 ## Security Configuration
 - Use strong passwords
 - Enable 2FA where possible

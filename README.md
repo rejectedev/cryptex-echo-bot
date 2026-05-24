@@ -104,6 +104,14 @@ docker compose up -d
 open http://localhost:3000
 ```
 
+### Deploy to Render
+
+The easiest way to deploy is using the provided Render Blueprint:
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/50shades0fGraei/cryptex-echo-bot)
+
+See [DEPLOYMENT.md](file:///home/sovereign/Projects/cryptex-echo-bot/DEPLOYMENT.md) for detailed Render configuration steps.
+
 ## 📚 Documentation
 
 Comprehensive documentation is available in the /docs directory:

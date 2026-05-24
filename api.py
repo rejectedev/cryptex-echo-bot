@@ -6,7 +6,12 @@ from webull_adapter import save_credentials
 from graei_chat import process_chat_message
 from api_algo import router as algo_router
 import json
+import os
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = FastAPI(
     title="Cryptex Echo API",
@@ -33,9 +38,16 @@ async def root():
     }
 
 # Enable CORS
+frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000", "http://127.0.0.1:3001"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:3001",
+        frontend_url
+    ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
@@ -110,4 +122,6 @@ async def update_credentials(request: Request):
     return {"status": "success", "message": "Credentials saved successfully"}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=5050)
+    host = os.getenv("HOST", "0.0.0.0")
+    port = int(os.getenv("PORT", 5050))
+    uvicorn.run(app, host=host, port=port)
