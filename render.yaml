@@ -21,10 +21,10 @@ services:
   # Frontend Static Site (Zero Cost)
   - type: web
     name: cryptex-echo-frontend
-    env: static
+    runtime: static
     rootDir: frontend
     buildCommand: npm install && npm run build
-    publishDir: out
+    publishPath: out
     envVars:
       - key: NEXT_PUBLIC_API_URL
         fromService:
