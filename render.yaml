@@ -12,7 +12,7 @@ services:
         fromService:
           name: cryptex-echo-frontend
           type: web
-          property: url
+          property: host
       # Add other necessary env vars from .env.example here
       # These should be configured in the Render Dashboard for security
       - key: WEBULL_EMAIL
@@ -34,4 +34,4 @@ services:
         fromService:
           name: cryptex-echo-backend
           type: web
-          property: url
+          property: host

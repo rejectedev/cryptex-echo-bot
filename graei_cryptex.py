@@ -5,8 +5,9 @@ initial_investment = 500
 days_in_quarter = 90
 daily_fluctuation_in_passer1 = 0.005
 daily_fluctuation_in_passer2 = -0.005
-daily_fluctuation_runner = 0.10
-profit_boost = 0.05
+daily_fluctuation_runner = 0.15
+profit_boost = 0.20
+creator_fee = 0.10  # 10% cut for the creator
 
 starting_capital = {
     "runner": 200,
@@ -32,7 +33,8 @@ pools = {
     "bi_weekly": 0,
     "monthly": 0,
     "bi_monthly": 0,
-    "quarterly": 0
+    "quarterly": 0,
+    "creator": 0  # 10% profit share pool
 }
 
 # Approval State
@@ -107,6 +109,11 @@ def trade_overlap_zones():
             capital["runner"] += proceeds
             profit = proceeds - (runner_price * units_to_sell * 0.9)
             if profit > 0:
+                # Deduct creator fee (10% of profit)
+                fee = profit * creator_fee
+                pools["creator"] += fee
+                profit -= fee
+                
                 # Initial daily profit capture
                 pools["daily"] += profit * 0.5
                 capital["runner"] += profit * 0.5
@@ -135,6 +142,11 @@ def merkaba_trade_logic(asset_name, low_bound, high_bound):
             capital[asset_name] += proceeds
             profit = proceeds - (price * units_to_sell * 0.9)
             if profit > 0:
+                # Deduct creator fee (10% of profit)
+                fee = profit * creator_fee
+                pools["creator"] += fee
+                profit -= fee
+                
                 pools["daily"] += profit * 0.5
                 capital[asset_name] += profit * 0.5
 
