@@ -24,7 +24,7 @@ services:
     runtime: static
     rootDir: frontend
     buildCommand: npm install && npm run build
-    publishPath: out
+    publishDir: out
     envVars:
       - key: NEXT_PUBLIC_API_URL
         fromService:
