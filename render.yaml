@@ -9,8 +9,8 @@ services:
       - key: FRONTEND_URL
         fromService:
           name: cryptex-echo-frontend
-          type: static
-          property: url
+          type: web
+          property: host
       - key: WEBULL_EMAIL
         sync: false
       - key: WEBULL_PASSWORD
@@ -19,15 +19,15 @@ services:
         sync: false
 
   # Frontend Static Site (Zero Cost)
-  - type: static_site
+  - type: web
     name: cryptex-echo-frontend
-    env: node
+    runtime: static
     rootDir: frontend
     buildCommand: npm install && npm run build
-    publishPath: out
+    staticPublishPath: out
     envVars:
       - key: NEXT_PUBLIC_API_URL
         fromService:
           name: cryptex-echo-backend
           type: web
-          property: url
+          property: host
